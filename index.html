@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>School360 Pro | CBC Multi‑Tenant School Management</title>
+  <title>School360 Pro | CBC Multi‑Tenant School Management (Full Demo)</title>
   <!-- Tailwind + Font Awesome + Chart.js -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -11,73 +11,100 @@
   <style>
     * { font-family: 'Inter', system-ui, sans-serif; }
     .transition-smooth { transition: all 0.2s ease; }
-    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 20px 25px -12px rgba(0,0,0,0.1); }
   </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-100">
 
-  <!-- Navbar -->
-  <nav class="bg-white shadow-sm sticky top-0 z-50 border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex items-center space-x-2">
-          <div class="h-8 w-8 bg-indigo-600 rounded-xl flex items-center justify-center"><i class="fas fa-graduation-cap text-white text-sm"></i></div>
-          <span class="font-bold text-xl tracking-tight">School<span class="text-indigo-600">360 Pro</span></span>
-          <span class="hidden md:inline-block text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-2">CBC Enterprise</span>
+  <!-- LOGIN SECTION (shown initially) -->
+  <div id="loginContainer" class="min-h-screen flex items-center justify-center px-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8">
+      <div class="text-center mb-6">
+        <div class="h-12 w-12 bg-indigo-600 rounded-xl flex items-center justify-center mx-auto"><i class="fas fa-graduation-cap text-white text-xl"></i></div>
+        <h2 class="text-2xl font-bold mt-3">School<span class="text-indigo-600">360 Pro</span></h2>
+        <p class="text-gray-500 text-sm">CBC School Management · Kenya</p>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Role</label>
+          <select id="loginRole" class="mt-1 w-full border rounded-lg px-3 py-2">
+            <option value="admin">Admin (admin@school.com / admin123)</option>
+            <option value="teacher">Teacher (teacher@school.com / teach123)</option>
+            <option value="parent">Parent (parent@example.com / parent123)</option>
+          </select>
         </div>
-        <div class="flex items-center gap-4">
-          <span class="text-sm text-gray-500"><i class="fas fa-building"></i> Greenhill Academy</span>
-          <button id="roleSwitcherBtn" class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2"><i class="fas fa-user-shield"></i> <span id="currentRoleLabel">Admin</span> <i class="fas fa-chevron-down text-xs"></i></button>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <input type="email" id="loginEmail" class="mt-1 w-full border rounded-lg px-3 py-2" placeholder="Enter email">
         </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Password</label>
+          <input type="password" id="loginPassword" class="mt-1 w-full border rounded-lg px-3 py-2" placeholder="••••••">
+        </div>
+        <button id="loginBtn" class="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700">Sign in</button>
+        <p class="text-xs text-center text-gray-400 mt-4">Demo credentials:<br>Admin: admin@school.com / admin123<br>Teacher: teacher@school.com / teach123<br>Parent: parent@example.com / parent123</p>
       </div>
     </div>
-  </nav>
-
-  <!-- Role Dropdown -->
-  <div id="roleDropdown" class="hidden absolute right-4 top-16 mt-1 w-40 bg-white rounded-lg shadow-lg border z-50">
-    <button data-role="admin" class="role-option w-full text-left px-4 py-2 hover:bg-indigo-50 text-sm">👑 Admin View</button>
-    <button data-role="teacher" class="role-option w-full text-left px-4 py-2 hover:bg-indigo-50 text-sm">👩‍🏫 Teacher View</button>
-    <button data-role="parent" class="role-option w-full text-left px-4 py-2 hover:bg-indigo-50 text-sm">👪 Parent View</button>
   </div>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <!-- Stats Grid (dynamic) -->
-    <div id="statsGrid" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"></div>
-    <!-- Main Dashboard Panel -->
-    <div id="dashboardContent" class="space-y-6"></div>
-  </main>
+  <!-- MAIN APP (hidden until login) -->
+  <div id="appContainer" class="hidden">
+    <!-- Top Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50 border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-2">
+            <div class="h-8 w-8 bg-indigo-600 rounded-xl flex items-center justify-center"><i class="fas fa-graduation-cap text-white text-sm"></i></div>
+            <span class="font-bold text-xl tracking-tight">School<span class="text-indigo-600">360 Pro</span></span>
+            <span class="hidden md:inline-block text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full ml-2">CBC Enterprise</span>
+          </div>
+          <div class="flex items-center gap-4">
+            <span class="text-sm text-gray-500"><i class="fas fa-building"></i> Greenhill Academy</span>
+            <div class="relative">
+              <button id="logoutBtn" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nav>
 
-  <!-- M-Pesa Modal -->
-  <div id="mpesaModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold"><i class="fas fa-phone-alt text-green-600 mr-2"></i>M-Pesa Express</h3><button id="closeMpesaModal" class="text-gray-400"><i class="fas fa-times"></i></button></div>
-      <p class="text-gray-600 text-sm mb-4">Pay school fees securely via M-Pesa (demo)</p>
-      <input type="text" id="mpesaPhone" placeholder="0712345678" class="w-full border rounded-lg px-4 py-2 mb-3" value="0712345678">
-      <p class="text-indigo-700 font-semibold" id="modalFeeAmount">Amount: KES 0</p>
-      <div class="flex gap-3 mt-4"><button id="confirmMpesaBtn" class="bg-green-600 text-white px-5 py-2 rounded-full w-full font-semibold hover:bg-green-700"><i class="fab fa-mpesa mr-1"></i> Pay with M-Pesa</button></div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <!-- Role-specific stats and content will be injected here -->
+      <div id="roleStats" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"></div>
+      <div id="roleContent" class="space-y-6"></div>
+    </main>
+
+    <!-- M-Pesa Modal -->
+    <div id="mpesaModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+      <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+        <div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold"><i class="fas fa-phone-alt text-green-600 mr-2"></i>M-Pesa Express</h3><button id="closeMpesaModal" class="text-gray-400"><i class="fas fa-times"></i></button></div>
+        <p class="text-gray-600 text-sm mb-4">Pay school fees securely via M-Pesa (demo)</p>
+        <input type="text" id="mpesaPhone" placeholder="0712345678" class="w-full border rounded-lg px-4 py-2 mb-3" value="0712345678">
+        <p class="text-indigo-700 font-semibold" id="modalFeeAmount">Amount: KES 0</p>
+        <div class="flex gap-3 mt-4"><button id="confirmMpesaBtn" class="bg-green-600 text-white px-5 py-2 rounded-full w-full font-semibold hover:bg-green-700"><i class="fab fa-mpesa mr-1"></i> Pay with M-Pesa</button></div>
+      </div>
     </div>
-  </div>
 
-  <!-- Assessment Entry Modal -->
-  <div id="assessmentModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6">
-      <h3 class="text-xl font-bold mb-3">Record Assessment Result</h3>
-      <div id="assessmentModalContent"></div>
-      <div class="flex justify-end mt-4 gap-2"><button id="closeAssessmentModal" class="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button><button id="saveAssessmentResult" class="px-4 py-2 bg-indigo-600 text-white rounded-lg">Save & Compute CBC Level</button></div>
+    <!-- Assessment Modal (Teacher: record scores) -->
+    <div id="assessmentModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm hidden items-center justify-center z-50">
+      <div class="bg-white rounded-2xl max-w-md w-full p-6">
+        <h3 class="text-xl font-bold mb-3">Record Assessment Result</h3>
+        <div id="assessmentModalContent"></div>
+        <div class="flex justify-end mt-4 gap-2"><button id="closeAssessmentModal" class="px-4 py-2 bg-gray-200 rounded-lg">Cancel</button><button id="saveAssessmentResult" class="px-4 py-2 bg-indigo-600 text-white rounded-lg">Save & Compute CBC Level</button></div>
+      </div>
     </div>
   </div>
 
   <script>
     // --------------------------------------------------------------
-    // 1. MOCK DATA MODELS (mirroring production PostgreSQL/Prisma)
+    // 1. FULL MOCK DATA MODELS (PostgreSQL / Prisma inspired)
     // --------------------------------------------------------------
     const school = { id: "sch_1", name: "Greenhill Academy", code: "GHA" };
 
-    // Users
+    // Users (passwords plain for demo)
     const users = [
-      { id: "u1", email: "admin@greenhill.ac.ke", role: "ADMIN", firstName: "James", lastName: "Otieno", schoolId: "sch_1" },
-      { id: "u2", email: "teacher@greenhill.ac.ke", role: "TEACHER", firstName: "Grace", lastName: "Mwangi", schoolId: "sch_1", teacherClasses: ["class_5east", "class_6west"] },
-      { id: "u3", email: "parent@example.com", role: "PARENT", firstName: "Mary", lastName: "Ochieng", schoolId: "sch_1" }
+      { id: "u_admin", email: "admin@school.com", password: "admin123", role: "ADMIN", firstName: "James", lastName: "Otieno" },
+      { id: "u_teacher", email: "teacher@school.com", password: "teach123", role: "TEACHER", firstName: "Grace", lastName: "Mwangi" },
+      { id: "u_parent", email: "parent@example.com", password: "parent123", role: "PARENT", firstName: "Mary", lastName: "Ochieng" }
     ];
 
     // Classes
@@ -86,58 +113,64 @@
       { id: "class_6west", name: "Grade 6 West", level: "PRIMARY", academicYear: "2025" }
     ];
 
-    // Students
+    // Students (linked to parent)
     const students = [
-      { id: "stu1", admissionNo: "S001", firstName: "Amara", lastName: "Ochieng", classId: "class_5east", parentUserId: "u3", feeBalance: 12500, feesPaid: 24500, totalDue: 37000 },
+      { id: "stu1", admissionNo: "S001", firstName: "Amara", lastName: "Ochieng", classId: "class_5east", parentUserId: "u_parent", feeBalance: 12500, feesPaid: 24500, totalDue: 37000 },
       { id: "stu2", admissionNo: "S002", firstName: "Brian", lastName: "Mwangi", classId: "class_5east", parentUserId: null, feeBalance: 5200, feesPaid: 31800, totalDue: 37000 }
     ];
 
     // Subjects (Learning Areas)
     const subjects = [
-      { id: "subj_math", name: "Mathematics", code: "MAT", defaultWeeklyPeriods: 5, category: "CORE" },
-      { id: "subj_eng", name: "English", code: "ENG", defaultWeeklyPeriods: 5, category: "CORE" },
-      { id: "subj_sci", name: "Science & Technology", code: "SCI", defaultWeeklyPeriods: 4, category: "CORE" }
+      { id: "subj_math", name: "Mathematics", code: "MAT", defaultWeeklyPeriods: 5 },
+      { id: "subj_eng", name: "English", code: "ENG", defaultWeeklyPeriods: 5 },
+      { id: "subj_sci", name: "Science & Technology", code: "SCI", defaultWeeklyPeriods: 4 },
+      { id: "subj_ss", name: "Social Studies", code: "SST", defaultWeeklyPeriods: 4 }
     ];
 
-    // Strands & Sub-strands (CBC structure)
+    // CBC Strands & Sub-strands
     const strands = [
       { id: "str_num", name: "Numbers", subjectId: "subj_math" },
-      { id: "str_frac", name: "Fractions", subjectId: "subj_math" }
+      { id: "str_frac", name: "Fractions", subjectId: "subj_math" },
+      { id: "str_grammar", name: "Grammar", subjectId: "subj_eng" }
     ];
     const subStrands = [
       { id: "sub_fraction_op", name: "Operations with Fractions", strandId: "str_frac" },
-      { id: "sub_place_value", name: "Place Value", strandId: "str_num" }
+      { id: "sub_place_value", name: "Place Value", strandId: "str_num" },
+      { id: "sub_tenses", name: "Tenses", strandId: "str_grammar" }
     ];
 
-    // ClassSubjects (offered subjects per class)
-    const classSubjects = [
-      { id: "cs_math_5east", classId: "class_5east", subjectId: "subj_math", weeklyPeriods: 5, teacherId: "u2" },
-      { id: "cs_eng_5east", classId: "class_5east", subjectId: "subj_eng", weeklyPeriods: 5, teacherId: "u2" },
-      { id: "cs_sci_5east", classId: "class_5east", subjectId: "subj_sci", weeklyPeriods: 4, teacherId: "u2" }
+    // ClassSubjects (offered per class)
+    let classSubjects = [
+      { id: "cs_math_5east", classId: "class_5east", subjectId: "subj_math", weeklyPeriods: 5, teacherId: "u_teacher" },
+      { id: "cs_eng_5east", classId: "class_5east", subjectId: "subj_eng", weeklyPeriods: 5, teacherId: "u_teacher" },
+      { id: "cs_sci_5east", classId: "class_5east", subjectId: "subj_sci", weeklyPeriods: 4, teacherId: "u_teacher" }
     ];
 
-    // Assessment Tasks (linked to sub-strand)
+    // Assessments (with CBC mapping)
     let assessments = [
-      { id: "ass_math_cat1", title: "Fractions CAT", type: "FORMATIVE", subjectId: "subj_math", classId: "class_5east", term: "Term 1 2025", maxScore: 50, weight: 0.3, dueDate: "2025-03-20", tasks: [{ subStrandId: "sub_fraction_op", maxScore: 50, cbcMapping: { BE: [0,39], AE: [40,59], ME: [60,79], EE: [80,100] } }] }
+      { id: "ass_math_cat1", title: "Fractions CAT", type: "FORMATIVE", subjectId: "subj_math", classId: "class_5east", term: "Term 1 2025", maxScore: 50, weight: 0.3, dueDate: "2025-03-20", tasks: [{ subStrandId: "sub_fraction_op", maxScore: 50, cbcMapping: { BE: [0,39], AE: [40,59], ME: [60,79], EE: [80,100] } }] },
+      { id: "ass_eng_cat1", title: "Tenses Assessment", type: "FORMATIVE", subjectId: "subj_eng", classId: "class_5east", term: "Term 1 2025", maxScore: 40, weight: 0.3, tasks: [{ subStrandId: "sub_tenses", maxScore: 40, cbcMapping: { BE: [0,39], AE: [40,59], ME: [60,79], EE: [80,100] } }] }
     ];
 
-    // Assessment Results (student scores)
+    // Assessment Results (scores per student)
     let assessmentResults = [
-      { id: "res1", studentId: "stu1", assessmentTaskId: "ass_math_cat1", scoreObtained: 42, remarks: "Good attempt", createdAt: new Date() }
+      { id: "res1", studentId: "stu1", assessmentTaskId: "ass_math_cat1", scoreObtained: 42, remarks: "Good attempt", createdAt: new Date() },
+      { id: "res2", studentId: "stu2", assessmentTaskId: "ass_math_cat1", scoreObtained: 28, remarks: "Needs more practice", createdAt: new Date() }
     ];
 
-    // Timetable Slots (conflict simulation)
+    // Timetable Slots (for conflict detection)
     let timetableSlots = [
-      { id: "ts1", timetableId: "tt_term1", dayOfWeek: "MONDAY", periodNumber: 1, classId: "class_5east", classSubjectId: "cs_math_5east", teacherId: "u2", roomId: "room101", startTime: "08:00", endTime: "08:40" }
+      { id: "ts1", timetableId: "tt_term1", dayOfWeek: "MONDAY", periodNumber: 1, classId: "class_5east", classSubjectId: "cs_math_5east", teacherId: "u_teacher", roomId: "room101", startTime: "08:00", endTime: "08:40" }
     ];
     const rooms = [{ id: "room101", name: "Lab 1", capacity: 30 }];
 
-    // Helper: get student by id
+    // Helper functions
     function getStudent(id) { return students.find(s => s.id === id); }
     function getClassSubjects(classId) { return classSubjects.filter(cs => cs.classId === classId); }
     function getSubject(id) { return subjects.find(s => s.id === id); }
+    function getAssessment(id) { return assessments.find(a => a.id === id); }
 
-    // CBC Level mapping from numeric score
+    // Map numeric score to CBC Level (BE/AE/ME/EE)
     function getCBCLevel(score, maxScore, mapping) {
       const percent = (score / maxScore) * 100;
       if (percent >= 80) return "EE";
@@ -146,7 +179,7 @@
       return "BE";
     }
 
-    // Compute overall CBC level for a student in a subject (average of tasks)
+    // Compute overall CBC level for a student in a subject (average of all completed assessments)
     function computeSubjectCBCLevel(studentId, subjectId, term) {
       const subjectAssessments = assessments.filter(a => a.subjectId === subjectId && a.classId === students.find(s=>s.id===studentId).classId && a.term === term);
       let totalPercent = 0, count = 0;
@@ -167,91 +200,172 @@
       return "BE";
     }
 
-    // ------------------ ROLE MANAGEMENT ------------------
-    let currentRole = "admin";
-    function renderStats() {
-      const statsDiv = document.getElementById('statsGrid');
-      if (currentRole === 'admin') {
-        statsDiv.innerHTML = `<div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-indigo-500"><div class="flex justify-between"><span>Total Students</span><i class="fas fa-users text-indigo-400"></i></div><p class="text-2xl font-bold">342</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500"><div class="flex justify-between"><span>Avg CBC Score</span><i class="fas fa-chart-line text-emerald-400"></i></div><p class="text-2xl font-bold">76.4%</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500"><div class="flex justify-between"><span>Fees Collected</span><i class="fas fa-coins text-amber-400"></i></div><p class="text-2xl font-bold">KES 1.24M</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-rose-500"><div class="flex justify-between"><span>Active Staff</span><i class="fas fa-chalkboard-user text-rose-400"></i></div><p class="text-2xl font-bold">28</p></div>`;
-      } else if (currentRole === 'teacher') {
-        statsDiv.innerHTML = `<div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>My Classes</span><i class="fas fa-school text-indigo-400"></i></div><p class="text-2xl font-bold">2</p><span>Grade 5 East, Grade 6 West</span></div>
-        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Pending Assessments</span><i class="fas fa-tasks text-amber-400"></i></div><p class="text-2xl font-bold">3</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Avg Class Performance</span><i class="fas fa-chart-simple text-emerald-400"></i></div><p class="text-2xl font-bold">74.2%</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Lessons Planned</span><i class="fas fa-calendar-check text-indigo-400"></i></div><p class="text-2xl font-bold">14</p></div>`;
-      } else { // parent
-        const child = students.find(s => s.parentUserId === "u3");
-        statsDiv.innerHTML = `<div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Child: ${child.firstName} ${child.lastName}</span><i class="fas fa-child text-indigo-400"></i></div><p class="text-lg font-semibold">Grade ${classes.find(c=>c.id===child.classId).name}</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Overall CBC Level</span><i class="fas fa-star text-yellow-400"></i></div><p class="text-2xl font-bold">ME</p></div>
-        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Fee Balance</span><i class="fas fa-wallet text-red-500"></i></div><p class="text-2xl font-bold">KES ${child.feeBalance.toLocaleString()}</p><button id="parentPayBtn" class="mt-2 text-xs bg-indigo-100 px-3 py-1 rounded-full">Pay now</button></div>
-        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Attendance</span><i class="fas fa-calendar-alt text-green-500"></i></div><p class="text-2xl font-bold">94%</p></div>`;
-        document.getElementById('parentPayBtn')?.addEventListener('click', () => { document.getElementById('modalFeeAmount').innerText = `Amount: KES ${child.feeBalance}`; document.getElementById('mpesaModal').classList.remove('hidden'); document.getElementById('mpesaModal').classList.add('flex'); window._payStudentId = child.id; });
+    // Get detailed subject performance for parent view (including strand breakdown)
+    function getSubjectDetailedPerformance(studentId, subjectId, term) {
+      const subjectAssessments = assessments.filter(a => a.subjectId === subjectId && a.classId === students.find(s=>s.id===studentId).classId && a.term === term);
+      const tasks = [];
+      for (let ass of subjectAssessments) {
+        const result = assessmentResults.find(r => r.studentId === studentId && r.assessmentTaskId === ass.id);
+        if (result) {
+          const taskDef = ass.tasks[0];
+          const level = getCBCLevel(result.scoreObtained, taskDef.maxScore, taskDef.cbcMapping);
+          tasks.push({
+            title: ass.title,
+            subStrand: subStrands.find(ss => ss.id === taskDef.subStrandId)?.name || "General",
+            score: result.scoreObtained,
+            maxScore: taskDef.maxScore,
+            cbcLevel: level,
+            remarks: result.remarks
+          });
+        }
+      }
+      const avgPercent = tasks.length ? tasks.reduce((sum, t) => sum + (t.score/t.maxScore)*100, 0) / tasks.length : 0;
+      let overallLevel = "Not graded";
+      if (tasks.length) {
+        if (avgPercent >= 80) overallLevel = "EE";
+        else if (avgPercent >= 60) overallLevel = "ME";
+        else if (avgPercent >= 40) overallLevel = "AE";
+        else overallLevel = "BE";
+      }
+      return { tasks, overallLevel, averageScore: avgPercent.toFixed(1) };
+    }
+
+    // --------------------------------------------------------------
+    // 2. AUTHENTICATION & SESSION MANAGEMENT
+    // --------------------------------------------------------------
+    let currentUser = null;
+    function login(email, password, role) {
+      const user = users.find(u => u.email === email && u.password === password && u.role === role.toUpperCase());
+      if (user) {
+        currentUser = user;
+        localStorage.setItem('school360_user', JSON.stringify({ id: user.id, role: user.role }));
+        return true;
+      }
+      return false;
+    }
+    function logout() {
+      currentUser = null;
+      localStorage.removeItem('school360_user');
+      document.getElementById('loginContainer').classList.remove('hidden');
+      document.getElementById('appContainer').classList.add('hidden');
+    }
+    function checkAutoLogin() {
+      const saved = localStorage.getItem('school360_user');
+      if (saved) {
+        const { id } = JSON.parse(saved);
+        currentUser = users.find(u => u.id === id);
+        if (currentUser) {
+          document.getElementById('loginContainer').classList.add('hidden');
+          document.getElementById('appContainer').classList.remove('hidden');
+          renderDashboard();
+        }
       }
     }
 
-    // ------------------ RENDER MAIN CONTENT ------------------
-    function renderMainContent() {
-      const container = document.getElementById('dashboardContent');
-      if (currentRole === 'admin') {
-        container.innerHTML = `
-          <div class="bg-white rounded-2xl shadow-sm p-5"><h2 class="font-bold text-lg"><i class="fas fa-chart-line text-indigo-500"></i> CBC Competency Trends (Grade 5-6)</h2><canvas id="adminChart" height="100"></canvas></div>
-          <div class="grid md:grid-cols-2 gap-6"><div class="bg-white p-5 rounded-2xl"><h3 class="font-semibold">Recent Assessments</h3><table class="w-full text-sm"><thead><tr><th>Student</th><th>Math</th><th>English</th><th>Science</th></tr></thead><tbody>${students.map(s => `<tr><td>${s.firstName}</td><td>${computeSubjectCBCLevel(s.id,"subj_math","Term 1 2025")}</td><td>${computeSubjectCBCLevel(s.id,"subj_eng","Term 1 2025")}</td><td>${computeSubjectCBCLevel(s.id,"subj_sci","Term 1 2025")}</td></tr>`).join('')}</tbody></table></div>
-          <div class="bg-white p-5 rounded-2xl"><h3 class="font-semibold">Fee Collection</h3><div class="h-32 flex items-center justify-center bg-gray-100 rounded">Graph placeholder</div><button class="mt-3 bg-indigo-50 text-indigo-700 w-full py-2 rounded-lg">Export Report</button></div></div>`;
-        new Chart(document.getElementById('adminChart'), { type: 'line', data: { labels: ['W1','W2','W3','W4'], datasets: [{ label: 'Math', data: [68,72,78,82], borderColor: '#4f46e5' }] } });
-      } 
-      else if (currentRole === 'teacher') {
-        container.innerHTML = `
-          <div class="bg-white rounded-2xl shadow-sm p-5"><div class="flex justify-between"><h2 class="font-bold"><i class="fas fa-clipboard-list"></i> My Assessments (Grade 5 East)</h2><button id="newAssessmentBtn" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm">+ New Assessment</button></div>
-          <div class="overflow-x-auto mt-3"><table class="min-w-full text-sm"><thead><tr><th>Title</th><th>Subject</th><th>Sub-strand</th><th>Actions</th></tr></thead><tbody id="teacherAssessmentList"></tbody></table></div></div>
-          <div class="bg-white rounded-2xl shadow-sm p-5 mt-6"><h3 class="font-bold"><i class="fas fa-calendar-week"></i> Weekly Timetable (Grade 5 East) – Conflict Check Enabled</h3><div id="timetableGrid" class="grid grid-cols-6 gap-2 mt-3 text-center text-sm"></div><p id="conflictMsg" class="text-red-500 text-xs mt-2"></p></div>`;
-        renderTeacherAssessments();
-        renderTimetable();
-        document.getElementById('newAssessmentBtn')?.addEventListener('click', () => openNewAssessmentModal());
-      } 
-      else { // Parent
-        const child = students.find(s => s.parentUserId === "u3");
-        container.innerHTML = `
-          <div class="bg-white rounded-2xl shadow-sm p-5"><h2 class="text-xl font-bold">${child.firstName}'s CBC Progress Report – Term 1 2025</h2>
-          <div id="parentReportCard" class="mt-4"></div><button id="genReportBtn" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg">Download Full Report Card</button></div>
-          <div class="bg-white rounded-2xl shadow-sm p-5 mt-6"><h3 class="font-semibold">Fee Payment History</h3><p class="text-2xl font-bold">Balance: KES ${child.feeBalance.toLocaleString()}</p><div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:${(child.feesPaid/child.totalDue)*100}%"></div></div><button id="parentQuickPay" class="mt-3 bg-green-100 text-green-700 px-4 py-2 rounded-lg"><i class="fab fa-mpesa"></i> Pay with M-Pesa</button></div>`;
-        renderParentReportCard(child);
-        document.getElementById('parentQuickPay')?.addEventListener('click', () => { document.getElementById('modalFeeAmount').innerText = `Amount: KES ${child.feeBalance}`; document.getElementById('mpesaModal').classList.remove('hidden'); document.getElementById('mpesaModal').classList.add('flex'); window._payStudentId = child.id; });
-        document.getElementById('genReportBtn')?.addEventListener('click', () => alert("PDF Report Card generated (demo). CBC Levels: Maths ME, English EE, Science ME."));
-      }
+    // --------------------------------------------------------------
+    // 3. DYNAMIC DASHBOARD RENDERING (Role-based)
+    // --------------------------------------------------------------
+    function renderDashboard() {
+      if (!currentUser) return;
+      const role = currentUser.role;
+      if (role === 'ADMIN') renderAdminDashboard();
+      else if (role === 'TEACHER') renderTeacherDashboard();
+      else if (role === 'PARENT') renderParentDashboard();
+    }
+
+    // ----- ADMIN DASHBOARD -----
+    function renderAdminDashboard() {
+      const statsDiv = document.getElementById('roleStats');
+      statsDiv.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-indigo-500"><div class="flex justify-between"><span>Total Students</span><i class="fas fa-users text-indigo-400"></i></div><p class="text-2xl font-bold">342</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-emerald-500"><div class="flex justify-between"><span>Avg CBC Score</span><i class="fas fa-chart-line text-emerald-400"></i></div><p class="text-2xl font-bold">74.2%</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-amber-500"><div class="flex justify-between"><span>Fees Collected</span><i class="fas fa-coins text-amber-400"></i></div><p class="text-2xl font-bold">KES 1.24M</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-5 border-l-4 border-rose-500"><div class="flex justify-between"><span>Active Staff</span><i class="fas fa-chalkboard-user text-rose-400"></i></div><p class="text-2xl font-bold">28</p></div>
+      `;
+      const contentDiv = document.getElementById('roleContent');
+      contentDiv.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm p-5"><h2 class="font-bold text-lg"><i class="fas fa-chart-line text-indigo-500"></i> School Performance Trends (CBC)</h2><canvas id="adminChart" height="100"></canvas></div>
+        <div class="grid md:grid-cols-2 gap-6"><div class="bg-white p-5 rounded-2xl"><h3 class="font-semibold">Student CBC Levels Overview</h3><table class="w-full text-sm"><thead><tr><th>Student</th><th>Math</th><th>English</th><th>Science</th></tr></thead><tbody>${students.map(s => `<tr><td>${s.firstName} ${s.lastName}</td><td>${computeSubjectCBCLevel(s.id,"subj_math","Term 1 2025")}</td><td>${computeSubjectCBCLevel(s.id,"subj_eng","Term 1 2025")}</td><td>${computeSubjectCBCLevel(s.id,"subj_sci","Term 1 2025")}</td></tr>`).join('')}</tbody></table></div>
+        <div class="bg-white p-5 rounded-2xl"><h3 class="font-semibold">Fee Collection Summary</h3><div class="h-32 flex items-center justify-center bg-gray-100 rounded"><canvas id="feeChart" height="100"></canvas></div><button class="mt-3 bg-indigo-50 text-indigo-700 w-full py-2 rounded-lg">Export Financial Report</button></div></div>
+      `;
+      new Chart(document.getElementById('adminChart'), { type: 'line', data: { labels: ['Week 1','Week 2','Week 3','Week 4'], datasets: [{ label: 'Math Competency', data: [68,72,78,82], borderColor: '#4f46e5' }] } });
+      new Chart(document.getElementById('feeChart'), { type: 'doughnut', data: { labels: ['Collected','Pending'], datasets: [{ data: [1240000, 240000], backgroundColor: ['#10b981','#f59e0b'] }] } });
+    }
+
+    // ----- TEACHER DASHBOARD (Assessments, Timetable, Score Entry) -----
+    function renderTeacherDashboard() {
+      const statsDiv = document.getElementById('roleStats');
+      statsDiv.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>My Classes</span><i class="fas fa-school text-indigo-400"></i></div><p class="text-2xl font-bold">2</p><span>Grade 5 East, Grade 6 West</span></div>
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Pending Assessments</span><i class="fas fa-tasks text-amber-400"></i></div><p class="text-2xl font-bold">3</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Class Avg Performance</span><i class="fas fa-chart-simple text-emerald-400"></i></div><p class="text-2xl font-bold">74.2%</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Lessons Planned</span><i class="fas fa-calendar-check text-indigo-400"></i></div><p class="text-2xl font-bold">14</p></div>
+      `;
+      const contentDiv = document.getElementById('roleContent');
+      contentDiv.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm p-5"><div class="flex justify-between"><h2 class="font-bold"><i class="fas fa-clipboard-list"></i> My Assessments (Grade 5 East)</h2><button id="newAssessmentBtn" class="bg-indigo-600 text-white px-3 py-1 rounded-lg text-sm">+ New Assessment</button></div>
+        <div class="overflow-x-auto mt-3"><table class="min-w-full text-sm"><thead><tr><th>Title</th><th>Subject</th><th>Sub-strand</th><th>Actions</th></tr></thead><tbody id="teacherAssessmentList"></tbody></table></div></div>
+        <div class="bg-white rounded-2xl shadow-sm p-5 mt-6"><h3 class="font-bold"><i class="fas fa-calendar-week"></i> Weekly Timetable (Grade 5 East) – Conflict Prevention</h3><div id="timetableGrid" class="grid grid-cols-6 gap-2 mt-3 text-center text-sm"></div><p id="conflictMsg" class="text-red-500 text-xs mt-2"></p></div>
+        <div class="bg-white rounded-2xl shadow-sm p-5 mt-6"><h3 class="font-bold">Class Performance Overview</h3><canvas id="classPerfChart" height="100"></canvas></div>
+      `;
+      renderTeacherAssessments();
+      renderTimetable();
+      // Performance chart
+      const mathScores = students.map(s => {
+        const res = assessmentResults.find(r => r.studentId === s.id && r.assessmentTaskId === "ass_math_cat1");
+        return res ? (res.scoreObtained / 50) * 100 : 0;
+      });
+      new Chart(document.getElementById('classPerfChart'), { type: 'bar', data: { labels: students.map(s=>s.firstName), datasets: [{ label: 'Math Score %', data: mathScores, backgroundColor: '#818cf8' }] } });
+      document.getElementById('newAssessmentBtn')?.addEventListener('click', () => alert("Demo: Create assessment linked to a sub-strand. In production, you'd select Strand/Sub-strand and set CBC mapping."));
     }
 
     function renderTeacherAssessments() {
       const tbody = document.getElementById('teacherAssessmentList');
       if (!tbody) return;
-      tbody.innerHTML = assessments.map(ass => `<tr><td>${ass.title}</td><td>${getSubject(ass.subjectId).name}</td><td>Fractions</td><td><button class="recordScoreBtn text-indigo-600" data-id="${ass.id}">Record Scores</button></td></tr>`).join('');
+      tbody.innerHTML = assessments.map(ass => `
+        <tr><td>${ass.title}</td><td>${getSubject(ass.subjectId).name}</td><td>${subStrands.find(ss => ss.id === ass.tasks[0].subStrandId)?.name || 'General'}</td><td><button class="recordScoreBtn text-indigo-600" data-id="${ass.id}">Record Scores</button></td></tr>
+      `).join('');
       document.querySelectorAll('.recordScoreBtn').forEach(btn => btn.addEventListener('click', (e) => openRecordModal(e.target.dataset.id)));
     }
 
     function openRecordModal(assessmentId) {
       const ass = assessments.find(a => a.id === assessmentId);
       const modal = document.getElementById('assessmentModal');
-      document.getElementById('assessmentModalContent').innerHTML = `<p class="mb-2">${ass.title} (Max: ${ass.tasks[0].maxScore})</p><input type="text" id="studentIdInput" placeholder="Student ID (stu1, stu2)" class="w-full border p-2 rounded mb-2"><input type="number" id="scoreInput" placeholder="Score" class="w-full border p-2 rounded"><textarea id="remarksInput" placeholder="Remarks" class="w-full border p-2 rounded mt-2"></textarea>`;
+      document.getElementById('assessmentModalContent').innerHTML = `
+        <p class="mb-2 font-semibold">${ass.title} (Max: ${ass.tasks[0].maxScore})</p>
+        <select id="studentSelect" class="w-full border p-2 rounded mb-2">
+          <option value="">Select Student</option>
+          ${students.map(s => `<option value="${s.id}">${s.firstName} ${s.lastName}</option>`).join('')}
+        </select>
+        <input type="number" id="scoreInput" placeholder="Score obtained" class="w-full border p-2 rounded mb-2">
+        <textarea id="remarksInput" placeholder="Teacher remarks" class="w-full border p-2 rounded"></textarea>
+      `;
       modal.classList.remove('hidden'); modal.classList.add('flex');
       window._currentAssessment = ass;
     }
 
     document.getElementById('saveAssessmentResult')?.addEventListener('click', () => {
       const ass = window._currentAssessment;
-      const studentId = document.getElementById('studentIdInput').value;
+      const studentId = document.getElementById('studentSelect').value;
       const score = parseFloat(document.getElementById('scoreInput').value);
       const remarks = document.getElementById('remarksInput').value;
-      if (!studentId || isNaN(score)) return alert("Valid inputs required");
+      if (!studentId || isNaN(score)) return alert("Please select a student and enter a valid score.");
       const task = ass.tasks[0];
+      if (score > task.maxScore) return alert(`Score cannot exceed ${task.maxScore}`);
       const cbcLevel = getCBCLevel(score, task.maxScore, task.cbcMapping);
-      assessmentResults.push({ id: "res"+Date.now(), studentId, assessmentTaskId: ass.id, scoreObtained: score, remarks, createdAt: new Date() });
-      alert(`Saved! CBC Level: ${cbcLevel}`);
+      // Save or update result
+      const existing = assessmentResults.find(r => r.studentId === studentId && r.assessmentTaskId === ass.id);
+      if (existing) {
+        existing.scoreObtained = score;
+        existing.remarks = remarks;
+      } else {
+        assessmentResults.push({ id: "res"+Date.now(), studentId, assessmentTaskId: ass.id, scoreObtained: score, remarks, createdAt: new Date() });
+      }
+      alert(`Result saved! CBC Level: ${cbcLevel}`);
       document.getElementById('assessmentModal').classList.add('hidden');
-      renderMainContent();
+      renderDashboard(); // refresh
     });
 
-    // Timetable rendering with conflict simulation
     function renderTimetable() {
       const gridDiv = document.getElementById('timetableGrid');
       if (!gridDiv) return;
@@ -263,8 +377,9 @@
         for (let d of days) {
           const existing = timetableSlots.find(s => s.dayOfWeek === d && s.periodNumber === p && s.classId === "class_5east");
           if (existing) {
-            const subj = classSubjects.find(cs => cs.id === existing.classSubjectId);
-            html += `<div class="bg-indigo-100 p-1 rounded text-xs">${subj ? getSubject(subj.subjectId).name : 'Subject'}</div>`;
+            const cs = classSubjects.find(c => c.id === existing.classSubjectId);
+            const subjName = cs ? getSubject(cs.subjectId).name : 'Subject';
+            html += `<div class="bg-indigo-100 p-1 rounded text-xs">${subjName}</div>`;
           } else {
             html += `<div class="bg-gray-50 border rounded p-1 text-xs text-gray-400"><button class="addSlotBtn text-indigo-500" data-day="${d}" data-period="${p}">+ Add</button></div>`;
           }
@@ -274,55 +389,111 @@
       document.querySelectorAll('.addSlotBtn').forEach(btn => btn.addEventListener('click', (e) => {
         const day = e.target.dataset.day;
         const period = parseInt(e.target.dataset.period);
-        const conflict = timetableSlots.some(s => s.dayOfWeek === day && s.periodNumber === period && (s.teacherId === "u2" || s.roomId === "room101"));
-        if (conflict) document.getElementById('conflictMsg').innerText = "Conflict! Teacher or room already booked at this time.";
-        else {
-          timetableSlots.push({ id: "new", timetableId: "tt_term1", dayOfWeek: day, periodNumber: period, classId: "class_5east", classSubjectId: "cs_math_5east", teacherId: "u2", roomId: "room101" });
+        // conflict detection: teacher or room already occupied?
+        const conflict = timetableSlots.some(s => s.dayOfWeek === day && s.periodNumber === period && (s.teacherId === "u_teacher" || s.roomId === "room101"));
+        if (conflict) {
+          document.getElementById('conflictMsg').innerText = "❌ Conflict! Teacher or room already booked at this time.";
+        } else {
+          timetableSlots.push({ id: "new"+Date.now(), timetableId: "tt_term1", dayOfWeek: day, periodNumber: period, classId: "class_5east", classSubjectId: "cs_math_5east", teacherId: "u_teacher", roomId: "room101" });
           renderTimetable();
-          document.getElementById('conflictMsg').innerText = "Slot added successfully (no conflict).";
+          document.getElementById('conflictMsg').innerText = "✅ Slot added successfully (no conflict).";
         }
       }));
     }
 
-    function openNewAssessmentModal() { alert("Demo: Create assessment with Strand/Sub‑strand mapping."); }
+    // ----- PARENT DASHBOARD (Detailed CBC report, fee payment) -----
+    function renderParentDashboard() {
+      const child = students.find(s => s.parentUserId === currentUser.id);
+      if (!child) {
+        document.getElementById('roleStats').innerHTML = '<div class="bg-white p-5 rounded-2xl">No child linked to this parent account.</div>';
+        return;
+      }
+      const statsDiv = document.getElementById('roleStats');
+      statsDiv.innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Child: ${child.firstName} ${child.lastName}</span><i class="fas fa-child text-indigo-400"></i></div><p class="text-lg font-semibold">${classes.find(c=>c.id===child.classId).name}</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Overall CBC Level</span><i class="fas fa-star text-yellow-400"></i></div><p class="text-2xl font-bold">ME</p></div>
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Fee Balance</span><i class="fas fa-wallet text-red-500"></i></div><p class="text-2xl font-bold">KES ${child.feeBalance.toLocaleString()}</p><button id="parentPayBtn" class="mt-2 text-xs bg-indigo-100 px-3 py-1 rounded-full">Pay now</button></div>
+        <div class="bg-white rounded-xl shadow-sm p-5"><div class="flex justify-between"><span>Attendance Rate</span><i class="fas fa-calendar-alt text-green-500"></i></div><p class="text-2xl font-bold">94%</p></div>
+      `;
+      const contentDiv = document.getElementById('roleContent');
+      contentDiv.innerHTML = `
+        <div class="bg-white rounded-2xl shadow-sm p-5"><h2 class="text-xl font-bold">${child.firstName}'s CBC Progress Report – Term 1 2025</h2>
+        <div id="parentReportCard" class="mt-4"></div><button id="genReportBtn" class="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg">Download Full Report Card (PDF)</button></div>
+        <div class="bg-white rounded-2xl shadow-sm p-5 mt-6"><h3 class="font-semibold">Fee Payment History</h3><p class="text-2xl font-bold">Balance: KES ${child.feeBalance.toLocaleString()}</p><div class="w-full bg-gray-200 rounded-full h-2 mt-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:${(child.feesPaid/child.totalDue)*100}%"></div></div><button id="parentQuickPay" class="mt-3 bg-green-100 text-green-700 px-4 py-2 rounded-lg"><i class="fab fa-mpesa"></i> Pay with M-Pesa</button></div>
+      `;
+      renderParentReportCard(child);
+      document.getElementById('parentPayBtn')?.addEventListener('click', () => openMpesa(child.feeBalance, child.id));
+      document.getElementById('parentQuickPay')?.addEventListener('click', () => openMpesa(child.feeBalance, child.id));
+      document.getElementById('genReportBtn')?.addEventListener('click', () => alert("📄 PDF Report Card generated (demo). CBC Levels: Math: ME, English: EE, Science: ME."));
+    }
 
     function renderParentReportCard(child) {
       const container = document.getElementById('parentReportCard');
-      const subjectsForClass = classSubjects.filter(cs => cs.classId === child.classId);
-      let html = `<table class="w-full text-sm border"><thead><tr><th>Subject</th><th>CBC Level</th><th>Teacher Remarks</th></tr></thead><tbody>`;
-      for (let cs of subjectsForClass) {
+      const classSubs = getClassSubjects(child.classId);
+      let html = `<div class="space-y-4">`;
+      for (let cs of classSubs) {
         const sub = getSubject(cs.subjectId);
-        const level = computeSubjectCBCLevel(child.id, sub.id, "Term 1 2025");
-        html += `<tr><td>${sub.name}</td><td><span class="px-2 py-1 rounded-full text-xs ${level==='ME'?'bg-green-100':level==='EE'?'bg-blue-100':'bg-yellow-100'}">${level}</span></td><td>Performs well in ${sub.name}</td></tr>`;
+        const perf = getSubjectDetailedPerformance(child.id, sub.id, "Term 1 2025");
+        html += `<div class="border rounded-lg p-3"><div class="font-bold text-indigo-700">${sub.name}</div><div class="text-sm">Overall CBC Level: <span class="px-2 py-0.5 rounded-full ${perf.overallLevel === 'ME' ? 'bg-green-100' : (perf.overallLevel === 'EE' ? 'bg-blue-100' : 'bg-yellow-100')}">${perf.overallLevel}</span> (Avg: ${perf.averageScore}%)</div>
+        <div class="mt-2 text-xs text-gray-600">Assessment tasks:</div><ul class="text-xs list-disc ml-4">${perf.tasks.map(t => `<li>${t.title} (${t.subStrand}) – Score: ${t.score}/${t.maxScore} → ${t.cbcLevel} – ${t.remarks || ''}</li>`).join('')}</ul></div>`;
       }
-      html += `</tbody></table><p class="mt-4 text-sm">Class Teacher Remark: Amara is a focused learner. <br/>Principal Remark: Continue nurturing talent.</p>`;
+      html += `<div class="mt-4 p-3 bg-gray-50 rounded"><p class="text-sm"><strong>Class Teacher Remark:</strong> Amara is a hardworking learner who collaborates well.</p><p class="text-sm"><strong>Principal Remark:</strong> Keep up the excellent effort in Mathematics.</p></div></div>`;
       container.innerHTML = html;
     }
 
-    // Role switcher
-    document.getElementById('roleSwitcherBtn')?.addEventListener('click', (e) => { document.getElementById('roleDropdown').classList.toggle('hidden'); });
-    document.querySelectorAll('.role-option').forEach(btn => btn.addEventListener('click', (e) => {
-      currentRole = btn.dataset.role;
-      document.getElementById('currentRoleLabel').innerText = currentRole === 'admin' ? 'Admin' : (currentRole === 'teacher' ? 'Teacher' : 'Parent');
-      document.getElementById('roleDropdown').classList.add('hidden');
-      renderStats(); renderMainContent();
-    }));
-    document.getElementById('closeMpesaModal')?.addEventListener('click', () => { document.getElementById('mpesaModal').classList.add('hidden'); });
+    function openMpesa(amount, studentId) {
+      const modal = document.getElementById('mpesaModal');
+      document.getElementById('modalFeeAmount').innerText = `Amount: KES ${amount.toLocaleString()}`;
+      modal.classList.remove('hidden'); modal.classList.add('flex');
+      window._payStudentId = studentId;
+    }
+
+    // M-Pesa payment confirmation
     document.getElementById('confirmMpesaBtn')?.addEventListener('click', () => {
       const phone = document.getElementById('mpesaPhone').value;
-      if (!phone.match(/^07\d{8}$/)) return alert("Valid M-Pesa number required");
-      alert(`Payment of ${document.getElementById('modalFeeAmount').innerText} successful. Ref: MPESA${Math.floor(Math.random()*10000)}`);
+      if (!phone.match(/^07\d{8}$/)) return alert("Valid M-Pesa number required (07xxxxxxxx).");
       if (window._payStudentId) {
         const student = students.find(s => s.id === window._payStudentId);
-        if (student) { student.feeBalance = 0; student.feesPaid = student.totalDue; renderStats(); renderMainContent(); }
+        if (student && student.feeBalance > 0) {
+          const paid = student.feeBalance;
+          student.feeBalance = 0;
+          student.feesPaid += paid;
+          alert(`✅ Payment of KES ${paid} received via M-Pesa ${phone}. Reference: MPESA${Math.floor(Math.random()*100000)}`);
+          renderDashboard(); // refresh parent view
+        } else {
+          alert("No outstanding balance.");
+        }
       }
       document.getElementById('mpesaModal').classList.add('hidden');
     });
-    document.getElementById('closeAssessmentModal')?.addEventListener('click', () => document.getElementById('assessmentModal').classList.add('hidden'));
 
-    // Initial load
-    renderStats(); renderMainContent();
+    document.getElementById('closeMpesaModal')?.addEventListener('click', () => {
+      document.getElementById('mpesaModal').classList.add('hidden');
+    });
+    document.getElementById('closeAssessmentModal')?.addEventListener('click', () => {
+      document.getElementById('assessmentModal').classList.add('hidden');
+    });
+
+    // --------------------------------------------------------------
+    // 4. EVENT LISTENERS & INIT
+    // --------------------------------------------------------------
+    document.getElementById('loginBtn')?.addEventListener('click', () => {
+      const role = document.getElementById('loginRole').value;
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      if (login(email, password, role)) {
+        document.getElementById('loginContainer').classList.add('hidden');
+        document.getElementById('appContainer').classList.remove('hidden');
+        renderDashboard();
+      } else {
+        alert("Invalid credentials. Please use the demo details shown.");
+      }
+    });
+    document.getElementById('logoutBtn')?.addEventListener('click', () => logout());
+
+    // Auto-login if session exists
+    checkAutoLogin();
   </script>
-  <footer class="border-t bg-white mt-12 py-6 text-center text-gray-500 text-xs">School360 Pro – CBC Multi‑tenant SaaS | Strand‑based assessments | Conflict‑free timetable | M‑Pesa ready</footer>
+  <footer class="border-t bg-white mt-12 py-6 text-center text-gray-500 text-xs">School360 Pro – CBC Multi‑tenant SaaS | Strand‑based assessments | Conflict‑free timetable | M‑Pesa ready | Full demo</footer>
 </body>
 </html>
